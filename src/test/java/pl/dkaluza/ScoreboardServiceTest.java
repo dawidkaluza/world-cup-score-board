@@ -17,8 +17,8 @@ class ScoreboardServiceTest {
         ScoreboardService scoreboardService = new ScoreboardService();
 
         ValidationException exception = catchThrowableOfType(
-            () -> scoreboardService.startGame(homeTeam, awayTeam),
-            ValidationException.class
+            ValidationException.class,
+            () -> scoreboardService.startGame(homeTeam, awayTeam)
         );
 
         assertThat(exception)
