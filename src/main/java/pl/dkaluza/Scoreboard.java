@@ -19,4 +19,8 @@ class Scoreboard {
 
         games.add(game);
     }
+
+    public List<Game> getSummary() {
+        return games;
+    }
 }

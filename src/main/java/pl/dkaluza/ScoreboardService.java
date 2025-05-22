@@ -21,7 +21,9 @@ public class ScoreboardService {
         scoreboard.addGame(game);
     }
 
+    /// Returns a summary of games on the scoreboard, ordered by: total score descending, start time descending.
+    /// @return summary of games.
     public List<Game> getSummaryOfGames() {
-        throw new UnsupportedOperationException();
+        return scoreboard.getSummary();
     }
 }

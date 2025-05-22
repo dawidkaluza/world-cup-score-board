@@ -112,8 +112,14 @@ class ScoreboardServiceTest {
         );
     }
 
+    @Test
     void getSummaryOfGames_noGamesAdded_returnEmptySummary() {
+        ScoreboardService scoreboardService = new ScoreboardService();
 
+        List<Game> games = scoreboardService.getSummaryOfGames();
+
+        assertThat(games)
+            .isEmpty();
     }
 
     void getSummaryOfGames_variousGamesAdded_returnOrderedByTotalScoreDescAndStartTimeDesc() {
