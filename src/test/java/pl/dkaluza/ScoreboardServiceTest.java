@@ -111,4 +111,12 @@ class ScoreboardServiceTest {
             ))
         );
     }
+
+    void getSummaryOfGames_noGamesAdded_returnEmptySummary() {
+
+    }
+
+    void getSummaryOfGames_variousGamesAdded_returnOrderedByTotalScoreDescAndStartTimeDesc() {
+
+    }
 }
