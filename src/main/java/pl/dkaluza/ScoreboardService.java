@@ -1,5 +1,7 @@
 package pl.dkaluza;
 
+import java.util.List;
+
 public class ScoreboardService {
     private final Scoreboard scoreboard;
 
@@ -17,5 +19,9 @@ public class ScoreboardService {
     public void startGame(String homeTeam, String awayTeam) throws ValidationException, GameAlreadyExistsException {
         Game game = new Game(homeTeam, awayTeam);
         scoreboard.addGame(game);
+    }
+
+    public List<Game> getSummaryOfGames() {
+        throw new UnsupportedOperationException();
     }
 }

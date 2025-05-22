@@ -71,7 +71,44 @@ class ScoreboardServiceTest {
         );
     }
 
-    void startGame_validNewGame_addGameToScoreboard() {
+    @ParameterizedTest
+    @MethodSource("startValidNewGameParamsProvider")
+    void startGame_validNewGame_gameAddedToTheScoreboard(List<Map.Entry<String, String>> existingGamesList) throws ValidationException, GameAlreadyExistsException {
+        ScoreboardService scoreboardService = new ScoreboardService();
+        for (var entry : existingGamesList) {
+            scoreboardService.startGame(entry.getKey(), entry.getValue());
+        }
 
+        scoreboardService.startGame("Poland", "Germany");
+
+        Game game = scoreboardService.getSummaryOfGames()
+            .stream()
+            .filter(filteredGame ->
+                filteredGame.homeTeamName().equals("Poland") &&
+                filteredGame.awayTeamName().equals("Germany")
+            ).findAny().orElse(null);
+
+        assertThat(game)
+            .isNotNull();
+
+        assertThat(game.homeTeamScore())
+            .isEqualTo(0);
+
+        assertThat(game.awayTeamScore())
+            .isEqualTo(0);
+    }
+
+    private static Stream<Arguments> startValidNewGameParamsProvider() {
+        return Stream.of(
+            Arguments.of(List.of()),
+            Arguments.of(List.of(
+                Map.entry("Germany", "Poland"),
+                Map.entry("Brazil", "USA")
+            )),
+            Arguments.of(List.of(
+                Map.entry("Brazil", "Chile"),
+                Map.entry("Germany", "Poland")
+            ))
+        );
     }
 }

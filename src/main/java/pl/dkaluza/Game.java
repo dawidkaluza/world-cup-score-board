@@ -1,6 +1,6 @@
 package pl.dkaluza;
 
-class Game {
+public class Game {
     private final String homeTeamName;
     private final String awayTeamName;
 
@@ -19,6 +19,22 @@ class Game {
 
     private static boolean isTeamNameValid(String teamName) {
         return teamName != null && !teamName.isBlank();
+    }
+
+    public String homeTeamName() {
+        return homeTeamName;
+    }
+
+    public String awayTeamName() {
+        return awayTeamName;
+    }
+
+    public int homeTeamScore() {
+        throw new UnsupportedOperationException();
+    }
+
+    public int awayTeamScore() {
+        throw new UnsupportedOperationException();
     }
 
     @Override
