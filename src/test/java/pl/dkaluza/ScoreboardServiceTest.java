@@ -122,7 +122,42 @@ class ScoreboardServiceTest {
             .isEmpty();
     }
 
-    void getSummaryOfGames_variousGamesAdded_returnOrderedByTotalScoreDescAndStartTimeDesc() {
+    @ParameterizedTest
+    @MethodSource("getSummaryOfGamesParamsProvider")
+    void getSummaryOfGames_variousGamesAdded_returnInExpectedOrder(List<Game> addedGames, List<Game> expectedSummary)
+        throws GameAlreadyExistsException {
+        Scoreboard scoreboard = new Scoreboard();
+        for (var game : addedGames) {
+            scoreboard.addGame(game);
+        }
 
+        ScoreboardService scoreboardService = new ScoreboardService(scoreboard);
+
+        List<Game> actualSummary = scoreboardService.getSummaryOfGames();
+        assertThat(expectedSummary)
+            .isEqualTo(actualSummary);
+    }
+
+    private static Stream<Arguments> getSummaryOfGamesParamsProvider() throws ValidationException {
+        return Stream.of(
+            Arguments.of(
+                List.of(
+                    createGame("Poland", "Germany", 1, 1),
+                    createGame("Brazil", "USA", 3, 2)
+                ),
+                List.of(
+                    createGame("Brazil", "USA", 3, 2),
+                    createGame("Poland", "Germany", 1, 1)
+                )
+            )
+        );
+    }
+
+    private static Game createGame(String homeTeamName, String awayTeamName, int homeTeamScore, int awayTeamScore)
+        throws ValidationException {
+        var game = new Game(homeTeamName, awayTeamName);
+        game.setHomeTeamScore(homeTeamScore);
+        game.setAwayTeamScore(awayTeamScore);
+        return game;
     }
 }

@@ -3,6 +3,8 @@ package pl.dkaluza;
 public class Game {
     private final String homeTeamName;
     private final String awayTeamName;
+    private int homeTeamScore;
+    private int awayTeamScore;
 
     public Game(String homeTeamName, String awayTeamName) throws ValidationException {
         if (!isTeamNameValid(homeTeamName) || !isTeamNameValid(awayTeamName)) {
@@ -30,11 +32,19 @@ public class Game {
     }
 
     public int homeTeamScore() {
-        throw new UnsupportedOperationException();
+        return homeTeamScore;
+    }
+
+    public void setHomeTeamScore(int homeTeamScore) {
+        this.homeTeamScore = homeTeamScore;
     }
 
     public int awayTeamScore() {
-        throw new UnsupportedOperationException();
+        return awayTeamScore;
+    }
+
+    public void setAwayTeamScore(int awayTeamScore) {
+        this.awayTeamScore = awayTeamScore;
     }
 
     @Override
