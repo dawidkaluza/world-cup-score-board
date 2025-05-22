@@ -1,8 +1,28 @@
 package pl.dkaluza;
 
-class ScoreboardServiceTest {
-    void startGame_invalidTeamNames_throwException() {
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
+import static org.assertj.core.api.Assertions.*;
+
+class ScoreboardServiceTest {
+    @ParameterizedTest
+    @CsvSource(value = {
+        "NULL, NULL",
+        "NULL, Poland",
+        "Argentina, NULL",
+        "'', Germany",
+    }, nullValues = "NULL")
+    void startGame_invalidTeamNames_throwException(String homeTeam, String awayTeam) {
+        ScoreboardService scoreboardService = new ScoreboardService();
+
+        ValidationException exception = catchThrowableOfType(
+            () -> scoreboardService.startGame(homeTeam, awayTeam),
+            ValidationException.class
+        );
+
+        assertThat(exception)
+            .isNotNull();
     }
 
     void startGame_gameAlreadyExists_throwException() {
