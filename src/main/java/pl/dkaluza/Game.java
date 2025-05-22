@@ -16,4 +16,20 @@ class Game {
     private static boolean isTeamNameValid(String teamName) {
         return teamName != null && !teamName.isBlank();
     }
+
+    @Override
+    public final boolean equals(Object o) {
+        if (!(o instanceof Game game)) {
+            return false;
+        }
+
+        return homeTeamName.equals(game.homeTeamName) && awayTeamName.equals(game.awayTeamName);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = homeTeamName.hashCode();
+        result = 31 * result + awayTeamName.hashCode();
+        return result;
+    }
 }

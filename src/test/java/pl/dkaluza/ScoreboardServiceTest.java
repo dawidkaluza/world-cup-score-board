@@ -27,7 +27,7 @@ class ScoreboardServiceTest {
     }
 
     @Test
-    void startGame_gameAlreadyExists_throwException() throws ValidationException {
+    void startGame_gameAlreadyExists_throwException() throws ValidationException, GameAlreadyExistsException {
         ScoreboardService scoreboardService = new ScoreboardService();
         scoreboardService.startGame("Poland", "Germany");
 
