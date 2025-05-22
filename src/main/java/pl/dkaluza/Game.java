@@ -47,6 +47,10 @@ public class Game {
         this.awayTeamScore = awayTeamScore;
     }
 
+    public int totalScore() {
+        return homeTeamScore + awayTeamScore;
+    }
+
     @Override
     public final boolean equals(Object o) {
         if (!(o instanceof Game game)) {

@@ -1,6 +1,7 @@
 package pl.dkaluza;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 class Scoreboard {
@@ -20,7 +21,11 @@ class Scoreboard {
         games.add(game);
     }
 
+    /// Returns a summary of games on the scoreboard, ordered by: total score descending, start time descending.
+    /// @return summary of games.
     public List<Game> getSummary() {
+        List<Game> games = new ArrayList<>(this.games);
+        games.reversed().sort(Comparator.comparingInt(Game::totalScore));
         return games;
     }
 }
