@@ -1,5 +1,6 @@
 package pl.dkaluza;
 
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -25,8 +26,18 @@ class ScoreboardServiceTest {
             .isNotNull();
     }
 
-    void startGame_gameAlreadyExists_throwException() {
+    @Test
+    void startGame_gameAlreadyExists_throwException() throws ValidationException {
+        ScoreboardService scoreboardService = new ScoreboardService();
+        scoreboardService.startGame("Poland", "Germany");
 
+        GameAlreadyExistsException exception = catchThrowableOfType(
+            GameAlreadyExistsException.class,
+            () -> scoreboardService.startGame("Poland", "Germany")
+        );
+
+        assertThat(exception)
+            .isNotNull();
     }
 
     void startGame_validNewGame_addGameToScoreboard() {
