@@ -2,7 +2,13 @@ package pl.dkaluza;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -26,10 +32,13 @@ class ScoreboardServiceTest {
             .isNotNull();
     }
 
-    @Test
-    void startGame_gameAlreadyExists_throwException() throws ValidationException, GameAlreadyExistsException {
+    @ParameterizedTest
+    @MethodSource("startGameWhenGameAlreadyExistsParamsProvider")
+    void startGame_gameAlreadyExists_throwException(List<Map.Entry<String, String>> existingGamesList) throws ValidationException, GameAlreadyExistsException {
         ScoreboardService scoreboardService = new ScoreboardService();
-        scoreboardService.startGame("Poland", "Germany");
+        for (var entry : existingGamesList) {
+            scoreboardService.startGame(entry.getKey(), entry.getValue());
+        }
 
         GameAlreadyExistsException exception = catchThrowableOfType(
             GameAlreadyExistsException.class,
@@ -38,6 +47,27 @@ class ScoreboardServiceTest {
 
         assertThat(exception)
             .isNotNull();
+    }
+
+    private static Stream<Arguments> startGameWhenGameAlreadyExistsParamsProvider() {
+        return Stream.of(
+            Arguments.of(List.of(
+                Map.entry("Poland", "Germany")
+            )),
+            Arguments.of(List.of(
+                Map.entry("Germany", "Poland"),
+                Map.entry("Poland", "Germany"),
+                Map.entry("Brazil", "USA")
+            )),
+            Arguments.of(List.of(
+                Map.entry("Poland", "Germany"),
+                Map.entry("England", "Spain")
+            )),
+            Arguments.of(List.of(
+                Map.entry("England", "Spain"),
+                Map.entry("Poland", "Germany")
+            ))
+        );
     }
 
     void startGame_validNewGame_addGameToScoreboard() {
