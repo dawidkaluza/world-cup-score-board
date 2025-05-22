@@ -19,6 +19,7 @@ class ScoreboardServiceTest {
         "NULL, Poland",
         "Argentina, NULL",
         "'', Germany",
+        "Germany, Germany",
     }, nullValues = "NULL")
     void startGame_invalidTeamNames_throwException(String homeTeam, String awayTeam) {
         ScoreboardService scoreboardService = new ScoreboardService();

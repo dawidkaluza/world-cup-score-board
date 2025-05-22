@@ -9,6 +9,10 @@ class Game {
             throw new ValidationException("Team names must bo non-blank strings");
         }
 
+        if (homeTeamName.equals(awayTeamName)) {
+            throw new ValidationException("Home and away team must must be different");
+        }
+
         this.homeTeamName = homeTeamName;
         this.awayTeamName = awayTeamName;
     }
