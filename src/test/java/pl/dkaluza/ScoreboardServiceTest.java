@@ -134,8 +134,8 @@ class ScoreboardServiceTest {
         ScoreboardService scoreboardService = new ScoreboardService(scoreboard);
 
         List<Game> actualSummary = scoreboardService.getSummaryOfGames();
-        assertThat(expectedSummary)
-            .isEqualTo(actualSummary);
+        assertThat(actualSummary)
+            .isEqualTo(expectedSummary);
     }
 
     private static Stream<Arguments> getSummaryOfGamesParamsProvider() throws ValidationException {
@@ -143,11 +143,39 @@ class ScoreboardServiceTest {
             Arguments.of(
                 List.of(
                     createGame("Poland", "Germany", 1, 1),
-                    createGame("Brazil", "USA", 3, 2)
+                    createGame("Brazil", "USA", 3, 2),
+                    createGame("England", "Croatia", 4, 4)
                 ),
                 List.of(
+                    createGame("England", "Croatia", 4, 4),
                     createGame("Brazil", "USA", 3, 2),
                     createGame("Poland", "Germany", 1, 1)
+                )
+            ),
+            Arguments.of(
+                List.of(
+                    createGame("Poland", "Germany", 1, 1),
+                    createGame("Brazil", "USA", 1, 1),
+                    createGame("England", "Croatia", 1, 1)
+                ),
+                List.of(
+                    createGame("England", "Croatia", 1, 1),
+                    createGame("Brazil", "USA", 1, 1),
+                    createGame("Poland", "Germany", 1, 1)
+                )
+            ),
+            Arguments.of(
+                List.of(
+                    createGame("Poland", "Germany", 4, 0),
+                    createGame("Brazil", "USA", 0, 0),
+                    createGame("England", "Croatia", 0, 3),
+                    createGame("Japan", "Egypt", 0, 0)
+                ),
+                List.of(
+                    createGame("Poland", "Germany", 4, 0),
+                    createGame("England", "Croatia", 0, 3),
+                    createGame("Japan", "Egypt", 0, 0),
+                    createGame("Brazil", "USA", 0, 0)
                 )
             )
         );

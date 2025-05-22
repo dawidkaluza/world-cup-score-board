@@ -66,4 +66,11 @@ public class Game {
         result = 31 * result + awayTeamName.hashCode();
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "Game{" +
+               homeTeamName + " " + homeTeamScore + ":" + awayTeamScore + " " + awayTeamName +
+       '}';
+    }
 }
