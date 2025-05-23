@@ -41,3 +41,4 @@ I could come up with some other entities (such as `Team` entity), but for the cu
 - remove parameterless constructors from ScoreboardService
 - review and refactor where needed
 - make all checked exceptions non-checked exceptions, extending from ScoreboardException class
+- create a new GameId object, compound of homeTeam and awayTeam names
