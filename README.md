@@ -36,6 +36,8 @@ It will run the tests and generate results as well as coverage reports.
   - Input: -
   - Output: List of games on the scoreboard, ordered by: total score desc, creation time desc.
 
+Since it was mentioned to keep the solution simple, I did not include any thread-safety mechanisms in the solution.
+
 ## Entities
 
 Game:
