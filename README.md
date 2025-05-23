@@ -1,8 +1,8 @@
-# World Cup Score Board
+# World Cup Scoreboard
 
 ## System description
 
-Score board system in which you can start a game, update its score, finish a game and get a summary of all available games.
+Scoreboard system in which you can start a game, update its score, finish a game and get a summary of all available games.
 
 Open the project folder in the terminal and run the following command:
 ```
