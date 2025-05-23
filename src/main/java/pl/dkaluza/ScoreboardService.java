@@ -16,7 +16,7 @@ public class ScoreboardService {
     /// @throws ValidationException if team names are invalid.
     /// @throws GameAlreadyExistsException if the game already exists on the scoreboard.
     /// @throws TeamAlreadyPlaysException if one of given teams already plays in some other game.
-    public void startGame(String homeTeam, String awayTeam) throws ValidationException, GameAlreadyExistsException {
+    public void startGame(String homeTeam, String awayTeam) throws ValidationException, GameAlreadyExistsException, TeamAlreadyPlaysException {
         Assertions.argumentNotNull(homeTeam);
         Assertions.argumentNotNull(awayTeam);
 

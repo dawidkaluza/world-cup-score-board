@@ -46,4 +46,4 @@ I could come up with some other entities (such as `Team` entity), but for the cu
 - [ ] review and refactor where needed
 - [x] make all checked exceptions non-checked exceptions, extending from ScoreboardException class
 - [x] create a new GameId object, compound of homeTeam and awayTeam names
-- [ ] since it's a live scoreboard, assume that one team can not be present in two different games at the same time
+- [x] since it's a live scoreboard, assume that no team can be present in two different games at the same time
