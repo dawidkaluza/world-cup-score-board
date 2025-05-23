@@ -20,10 +20,9 @@ class Scoreboard {
         games.add(game);
     }
 
-    // TODO update params to accept GameId only
-    public Optional<Game> findGameByTeams(String homeTeamName, String awayTeamName) {
+    public Optional<Game> findGameById(GameId id) {
         return games.stream()
-            .filter(game -> game.id().homeTeam().equals(homeTeamName) && game.id().awayTeam().equals(awayTeamName))
+            .filter(game -> game.id().equals(id))
             .findAny();
     }
 
@@ -31,8 +30,6 @@ class Scoreboard {
         games.remove(game);
     }
 
-    /// Returns a summary of games on the scoreboard, ordered by: total score descending, start time descending.
-    /// @return summary of games.
     public List<Game> getSummary() {
         List<Game> reversedGames = new ArrayList<>(this.games.reversed());
         reversedGames.sort(Comparator.comparingInt(Game::totalScore).reversed());

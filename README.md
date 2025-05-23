@@ -40,9 +40,9 @@ I could come up with some other entities (such as `Team` entity), but for the cu
 ## TODO
 
 - [x] should it be possible to reduce a score by more than two goals? realistically, not really, think about that
-- [ ] impl null checking in public methods
-- [ ] in tests, extract ScoreboardService and Scoreboard to class fields
-- [ ] remove parameterless constructors from ScoreboardService
+- [x] impl null checking in public methods
+- [x] in tests, extract ScoreboardService and Scoreboard to class fields
+- [x] remove parameterless constructors from ScoreboardService
 - [ ] review and refactor where needed
 - [x] make all checked exceptions non-checked exceptions, extending from ScoreboardException class
 - [x] create a new GameId object, compound of homeTeam and awayTeam names

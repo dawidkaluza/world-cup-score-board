@@ -5,13 +5,8 @@ import java.util.List;
 public class ScoreboardService {
     private final Scoreboard scoreboard;
 
-    @Deprecated
     ScoreboardService(Scoreboard scoreboard) {
         this.scoreboard = scoreboard;
-    }
-
-    public ScoreboardService() {
-        this.scoreboard = new Scoreboard();
     }
 
     /// Starts a new game and adds it to the scoreboard.
@@ -21,6 +16,7 @@ public class ScoreboardService {
     public void startGame(String homeTeam, String awayTeam) throws ValidationException, GameAlreadyExistsException {
         Assertions.argumentNotNull(homeTeam);
         Assertions.argumentNotNull(awayTeam);
+
         var gameId = new GameId(homeTeam, awayTeam);
         var game = new Game(gameId);
         scoreboard.addGame(game);
@@ -31,7 +27,8 @@ public class ScoreboardService {
         Assertions.argumentNotNull(homeTeam);
         Assertions.argumentNotNull(awayTeam);
 
-        Game game = scoreboard.findGameByTeams(homeTeam, awayTeam)
+        var gameId = new GameId(homeTeam, awayTeam);
+        Game game = scoreboard.findGameById(gameId)
             .orElseThrow(() -> new GameNotFoundException("Game not found"));
 
         game.setHomeTeamScore(homeTeamScore);
@@ -42,7 +39,8 @@ public class ScoreboardService {
         Assertions.argumentNotNull(homeTeam);
         Assertions.argumentNotNull(awayTeam);
 
-        Game game = scoreboard.findGameByTeams(homeTeam, awayTeam)
+        var gameId = new GameId(homeTeam, awayTeam);
+        Game game = scoreboard.findGameById(gameId)
             .orElseThrow(() -> new GameNotFoundException("Game not found"));
 
         scoreboard.removeGame(game);

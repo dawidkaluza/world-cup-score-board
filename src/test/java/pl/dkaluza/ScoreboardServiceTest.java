@@ -48,8 +48,6 @@ class ScoreboardServiceTest {
         "Germany, Germany",
     }, nullValues = "NULL")
     void startGame_invalidTeamNames_throwException(String homeTeam, String awayTeam) {
-        ScoreboardService scoreboardService = new ScoreboardService();
-
         ValidationException exception = catchThrowableOfType(
             ValidationException.class,
             () -> scoreboardService.startGame(homeTeam, awayTeam)
@@ -62,7 +60,6 @@ class ScoreboardServiceTest {
     @ParameterizedTest
     @MethodSource("startGameWhenGameAlreadyExistsParamsProvider")
     void startGame_gameAlreadyExists_throwException(List<Map.Entry<String, String>> existingGamesList) throws ValidationException, GameAlreadyExistsException {
-        ScoreboardService scoreboardService = new ScoreboardService();
         for (var entry : existingGamesList) {
             scoreboardService.startGame(entry.getKey(), entry.getValue());
         }
@@ -100,7 +97,6 @@ class ScoreboardServiceTest {
     @ParameterizedTest
     @MethodSource("startValidNewGameParamsProvider")
     void startGame_validNewGame_gameAddedToTheScoreboard(List<Map.Entry<String, String>> existingGamesList) throws ValidationException, GameAlreadyExistsException {
-        ScoreboardService scoreboardService = new ScoreboardService();
         for (var entry : existingGamesList) {
             scoreboardService.startGame(entry.getKey(), entry.getValue());
         }
@@ -145,7 +141,6 @@ class ScoreboardServiceTest {
     }, nullValues = "NULL")
     void updateScore_nullParams_throwException(String homeTeamName, String awayTeamName)
         throws GameAlreadyExistsException, ValidationException {
-        ScoreboardService scoreboardService = new ScoreboardService();
         scoreboardService.startGame("Poland", "Germany");
         scoreboardService.startGame("England", "Croatia");
         scoreboardService.startGame("Italy", "Portugal");
@@ -165,7 +160,6 @@ class ScoreboardServiceTest {
         "England, Germany",
     })
     void updateScore_gameNotFound_throwException(String homeTeamName, String awayTeamName) throws GameAlreadyExistsException, ValidationException {
-        ScoreboardService scoreboardService = new ScoreboardService();
         scoreboardService.startGame("Poland", "Germany");
         scoreboardService.startGame("England", "Croatia");
         scoreboardService.startGame("Italy", "Portugal");
@@ -187,7 +181,6 @@ class ScoreboardServiceTest {
     })
     void updateScore_invalidScore_throwException(String homeTeamName, String awayTeamName, int homeTeamScore, int awayTeamScore)
         throws GameAlreadyExistsException, ValidationException {
-        ScoreboardService scoreboardService = new ScoreboardService();
         scoreboardService.startGame("Poland", "Germany");
         scoreboardService.startGame("England", "Croatia");
         scoreboardService.startGame("Italy", "Portugal");
@@ -207,17 +200,15 @@ class ScoreboardServiceTest {
         "England, Croatia, 4, 0",
         "Italy, Portugal, 0, 0",
     })
-    void updateScore_validUpdate_scoreboardUpdated(String homeTeamName, String awayTeamName, int homeTeamScore, int awayTeamScore)
+    void updateScore_validUpdate_scoreboardUpdated(String homeTeam, String awayTeam, int homeTeamScore, int awayTeamScore)
         throws GameAlreadyExistsException, ValidationException, GameNotFoundException {
-        Scoreboard scoreboard = new Scoreboard();
-        ScoreboardService scoreboardService = new ScoreboardService(scoreboard);
         scoreboardService.startGame("Poland", "Germany");
         scoreboardService.startGame("England", "Croatia");
         scoreboardService.startGame("Italy", "Portugal");
 
-        scoreboardService.updateScore(homeTeamName, awayTeamName, homeTeamScore, awayTeamScore);
+        scoreboardService.updateScore(homeTeam, awayTeam, homeTeamScore, awayTeamScore);
 
-        Optional<Game> optionalGame = scoreboard.findGameByTeams(homeTeamName, awayTeamName);
+        Optional<Game> optionalGame = scoreboard.findGameById(new GameId(homeTeam, awayTeam));
         assertThat(optionalGame)
             .isPresent();
 
@@ -237,8 +228,6 @@ class ScoreboardServiceTest {
         "NULL, NULL",
     }, nullValues = "NULL")
     void finishGame_nullParams_throwException(String homeTeamName, String awayTeamName) {
-        ScoreboardService scoreboardService = new ScoreboardService();
-
         IllegalArgumentException exception = catchThrowableOfType(
             IllegalArgumentException.class,
             () -> scoreboardService.finishGame(homeTeamName, awayTeamName)
@@ -254,7 +243,6 @@ class ScoreboardServiceTest {
         "Poland, Croatia",
     })
     void finishGame_gameNotFound_throwException(String homeTeamName, String awayTeamName) throws GameAlreadyExistsException, ValidationException {
-        ScoreboardService scoreboardService = new ScoreboardService();
         scoreboardService.startGame("Ecuador", "Panama");
 
         GameNotFoundException exception = catchThrowableOfType(
@@ -271,15 +259,13 @@ class ScoreboardServiceTest {
     @MethodSource("finishGameFoundGameParamsProvider")
     void finishGame_foundGame_gameRemovedFromScoreboard(List<Map.Entry<String, String>> gamesToStart, Map.Entry<String, String> gameToFinish)
         throws GameAlreadyExistsException, ValidationException, GameNotFoundException {
-        Scoreboard scoreboard = new Scoreboard();
-        ScoreboardService scoreboardService = new ScoreboardService(scoreboard);
         for (var gameToStart : gamesToStart) {
             scoreboardService.startGame(gameToStart.getKey(), gameToStart.getValue());
         }
 
         scoreboardService.finishGame(gameToFinish.getKey(), gameToFinish.getValue());
 
-        assertThat(scoreboard.findGameByTeams(gameToFinish.getKey(), gameToFinish.getValue()))
+        assertThat(scoreboard.findGameById(new GameId(gameToFinish.getKey(), gameToFinish.getValue())))
             .isEmpty();
     }
 
@@ -315,8 +301,6 @@ class ScoreboardServiceTest {
 
     @Test
     void getSummaryOfGames_noGamesAdded_returnEmptySummary() {
-        ScoreboardService scoreboardService = new ScoreboardService();
-
         List<Game> games = scoreboardService.getSummaryOfGames();
 
         assertThat(games)
@@ -327,14 +311,12 @@ class ScoreboardServiceTest {
     @MethodSource("getSummaryOfGamesParamsProvider")
     void getSummaryOfGames_variousGamesAdded_returnInExpectedOrder(List<Game> addedGames, List<Game> expectedSummary)
         throws GameAlreadyExistsException {
-        Scoreboard scoreboard = new Scoreboard();
         for (var game : addedGames) {
             scoreboard.addGame(game);
         }
 
-        ScoreboardService scoreboardService = new ScoreboardService(scoreboard);
-
         List<Game> actualSummary = scoreboardService.getSummaryOfGames();
+
         assertThat(actualSummary)
             .isEqualTo(expectedSummary);
     }
