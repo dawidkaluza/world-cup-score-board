@@ -22,6 +22,8 @@ public class ScoreboardService {
     }
 
     public void updateScore(String homeTeamName, String awayTeamName, int homeTeamScore, int awayTeamScore) throws GameNotFoundException {
+        Assertions.argumentNotNull(homeTeamName);
+        Assertions.argumentNotNull(awayTeamName);
 
     }
 

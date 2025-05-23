@@ -112,8 +112,26 @@ class ScoreboardServiceTest {
         );
     }
 
-    void updateScore_nullParams_throwException() {
+    @ParameterizedTest
+    @CsvSource(value = {
+        "NULL, Poland",
+        "NULL, NULL",
+        "Poland, NULL",
+    }, nullValues = "NULL")
+    void updateScore_nullParams_throwException(String homeTeamName, String awayTeamName)
+        throws GameAlreadyExistsException, ValidationException {
+        ScoreboardService scoreboardService = new ScoreboardService();
+        scoreboardService.startGame("Poland", "Germany");
+        scoreboardService.startGame("England", "Croatia");
+        scoreboardService.startGame("Italy", "Portugal");
 
+        IllegalArgumentException exception = catchThrowableOfType(
+            IllegalArgumentException.class,
+            () -> scoreboardService.updateScore(homeTeamName, awayTeamName, 1, 1)
+        );
+
+        assertThat(exception)
+            .isNotNull();
     }
 
     void updateScore_gameNotFound_throwException() {
@@ -181,6 +199,7 @@ class ScoreboardServiceTest {
             .isEmpty();
     }
 
+    // TODO move into CsvSource
     private static Stream<Arguments> finishGameFoundGameParamsProvider() {
         return Stream.of(
             Arguments.of(
