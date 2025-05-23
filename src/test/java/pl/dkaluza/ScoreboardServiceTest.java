@@ -1,5 +1,6 @@
 package pl.dkaluza;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -14,12 +15,36 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.*;
 
 class ScoreboardServiceTest {
+    private Scoreboard scoreboard;
+    private ScoreboardService scoreboardService;
+
+    @BeforeEach
+    void setUp() {
+        scoreboard = new Scoreboard();
+        scoreboardService = new ScoreboardService(scoreboard);
+    }
+
     @ParameterizedTest
     @CsvSource(value = {
         "NULL, NULL",
         "NULL, Poland",
         "Argentina, NULL",
+    }, nullValues = "NULL")
+    void startGame_nullParams_throwException(String homeTeam, String awayTeam) {
+        IllegalArgumentException exception = catchThrowableOfType(
+            IllegalArgumentException.class,
+            () -> scoreboardService.startGame(homeTeam, awayTeam)
+        );
+
+        assertThat(exception)
+            .isNotNull();
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
         "'', Germany",
+        "'', ''",
+        "Germany, ''",
         "Germany, Germany",
     }, nullValues = "NULL")
     void startGame_invalidTeamNames_throwException(String homeTeam, String awayTeam) {

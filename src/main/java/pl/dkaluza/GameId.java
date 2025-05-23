@@ -4,9 +4,13 @@ public class GameId {
     private final String homeTeam;
     private final String awayTeam;
 
-    GameId(String homeTeam, String awayTeam) {
+    GameId(String homeTeam, String awayTeam) throws ValidationException {
         if (isTeamNameInvalid(homeTeam) || isTeamNameInvalid(awayTeam)) {
             throw new ValidationException("Team names must bo non-blank strings");
+        }
+
+        if (homeTeam.equals(awayTeam)) {
+            throw new ValidationException("Home and away team must be different");
         }
 
         this.homeTeam = homeTeam;

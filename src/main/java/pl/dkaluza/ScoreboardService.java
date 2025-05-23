@@ -5,6 +5,7 @@ import java.util.List;
 public class ScoreboardService {
     private final Scoreboard scoreboard;
 
+    @Deprecated
     ScoreboardService(Scoreboard scoreboard) {
         this.scoreboard = scoreboard;
     }
@@ -14,20 +15,23 @@ public class ScoreboardService {
     }
 
     /// Starts a new game and adds it to the scoreboard.
+    /// @throws IllegalArgumentException if params are null.
     /// @throws ValidationException if team names are invalid.
-    /// @throws GameAlreadyExistsException if the game already exists in the scoreboard.
+    /// @throws GameAlreadyExistsException if the game already exists on the scoreboard.
     public void startGame(String homeTeam, String awayTeam) throws ValidationException, GameAlreadyExistsException {
+        Assertions.argumentNotNull(homeTeam);
+        Assertions.argumentNotNull(awayTeam);
         var gameId = new GameId(homeTeam, awayTeam);
         var game = new Game(gameId);
         scoreboard.addGame(game);
     }
 
-    public void updateScore(String homeTeamName, String awayTeamName, int homeTeamScore, int awayTeamScore)
+    public void updateScore(String homeTeam, String awayTeam, int homeTeamScore, int awayTeamScore)
         throws GameNotFoundException, ValidationException {
-        Assertions.argumentNotNull(homeTeamName);
-        Assertions.argumentNotNull(awayTeamName);
+        Assertions.argumentNotNull(homeTeam);
+        Assertions.argumentNotNull(awayTeam);
 
-        Game game = scoreboard.findGameByTeams(homeTeamName, awayTeamName)
+        Game game = scoreboard.findGameByTeams(homeTeam, awayTeam)
             .orElseThrow(() -> new GameNotFoundException("Game not found"));
 
         game.setHomeTeamScore(homeTeamScore);
