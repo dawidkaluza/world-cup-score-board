@@ -134,12 +134,46 @@ class ScoreboardServiceTest {
             .isNotNull();
     }
 
-    void updateScore_gameNotFound_throwException() {
+    @ParameterizedTest
+    @CsvSource({
+        "Germany, Poland",
+        "England, Germany",
+    })
+    void updateScore_gameNotFound_throwException(String homeTeamName, String awayTeamName) throws GameAlreadyExistsException, ValidationException {
+        ScoreboardService scoreboardService = new ScoreboardService();
+        scoreboardService.startGame("Poland", "Germany");
+        scoreboardService.startGame("England", "Croatia");
+        scoreboardService.startGame("Italy", "Portugal");
 
+        GameNotFoundException exception = catchThrowableOfType(
+            GameNotFoundException.class,
+            () -> scoreboardService.updateScore(homeTeamName, awayTeamName, 1, 1)
+        );
+
+        assertThat(exception)
+            .isNotNull();
     }
 
-    void updateScore_invalidScore_throwException() {
+    @ParameterizedTest
+    @CsvSource({
+        "Poland, Germany, -1, 0",
+        "England, Croatia, 3, -1",
+        "Italy, Portugal, -1, -4",
+    })
+    void updateScore_invalidScore_throwException(String homeTeamName, String awayTeamName, int homeTeamScore, int awayTeamScore)
+        throws GameAlreadyExistsException, ValidationException {
+        ScoreboardService scoreboardService = new ScoreboardService();
+        scoreboardService.startGame("Poland", "Germany");
+        scoreboardService.startGame("England", "Croatia");
+        scoreboardService.startGame("Italy", "Portugal");
 
+        ValidationException exception = catchThrowableOfType(
+            ValidationException.class,
+            () -> scoreboardService.updateScore(homeTeamName, awayTeamName, homeTeamScore, awayTeamScore)
+        );
+
+        assertThat(exception)
+            .isNotNull();
     }
 
     void updateScore_validUpdate_scoreboardUpdated() {

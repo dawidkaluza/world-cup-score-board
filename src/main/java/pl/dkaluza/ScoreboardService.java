@@ -25,6 +25,9 @@ public class ScoreboardService {
         Assertions.argumentNotNull(homeTeamName);
         Assertions.argumentNotNull(awayTeamName);
 
+        Game game = scoreboard.findGameByTeams(homeTeamName, awayTeamName)
+            .orElseThrow(() -> new GameNotFoundException("Game not found"));
+
     }
 
     public void finishGame(String homeTeam, String awayTeam) throws GameNotFoundException {
