@@ -112,6 +112,34 @@ class ScoreboardServiceTest {
         );
     }
 
+    @ParameterizedTest
+    @CsvSource(value = {
+        "NULL, NULL",
+        "NULL, Poland",
+        "Argentina, NULL",
+        "'', Germany",
+        "Germany, Germany",
+    }, nullValues = "NULL")
+    void finishGame_invalidTeamNames_throwException(String homeTeamName, String awayTeamName) {
+        ScoreboardService scoreboardService = new ScoreboardService();
+
+        ValidationException exception = catchThrowableOfType(
+            ValidationException.class,
+            () -> scoreboardService.finishGame(homeTeamName, awayTeamName)
+        );
+
+        assertThat(exception)
+            .isNotNull();
+    }
+
+    void finishGame_gameNotFound_throwException() {
+
+    }
+
+    void finishGame_foundGame_gameRemovedFromScoreboard() {
+
+    }
+
     @Test
     void getSummaryOfGames_noGamesAdded_returnEmptySummary() {
         ScoreboardService scoreboardService = new ScoreboardService();
