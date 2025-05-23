@@ -79,7 +79,9 @@ class ScoreboardServiceTest {
     @ParameterizedTest
     @CsvSource({
         "Poland, USA",
-        "Croatia, Brazil",
+        "Croatia, USA",
+        "Brazil, England",
+        "Brazil, Portugal",
         "Portugal, Italy",
     })
     void startGame_teamAlreadyPlays_throwException(String homeTeam, String awayTeam) {
