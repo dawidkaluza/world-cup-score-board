@@ -21,13 +21,16 @@ public class ScoreboardService {
         scoreboard.addGame(game);
     }
 
-    public void updateScore(String homeTeamName, String awayTeamName, int homeTeamScore, int awayTeamScore) throws GameNotFoundException {
+    public void updateScore(String homeTeamName, String awayTeamName, int homeTeamScore, int awayTeamScore)
+        throws GameNotFoundException, ValidationException {
         Assertions.argumentNotNull(homeTeamName);
         Assertions.argumentNotNull(awayTeamName);
 
         Game game = scoreboard.findGameByTeams(homeTeamName, awayTeamName)
             .orElseThrow(() -> new GameNotFoundException("Game not found"));
 
+        game.setHomeTeamScore(homeTeamScore);
+        game.setHomeTeamScore(awayTeamScore);
     }
 
     public void finishGame(String homeTeam, String awayTeam) throws GameNotFoundException {

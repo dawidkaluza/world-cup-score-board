@@ -23,6 +23,10 @@ public class Game {
         return teamName != null && !teamName.isBlank();
     }
 
+    private static boolean isScoreValid(int score) {
+        return score >= 0;
+    }
+
     public String homeTeamName() {
         return homeTeamName;
     }
@@ -35,7 +39,11 @@ public class Game {
         return homeTeamScore;
     }
 
-    public void setHomeTeamScore(int homeTeamScore) {
+    void setHomeTeamScore(int homeTeamScore) throws ValidationException {
+        if (!isScoreValid(homeTeamScore)) {
+            throw new ValidationException("Score must be a positive value");
+        }
+
         this.homeTeamScore = homeTeamScore;
     }
 
@@ -43,7 +51,11 @@ public class Game {
         return awayTeamScore;
     }
 
-    public void setAwayTeamScore(int awayTeamScore) {
+    void setAwayTeamScore(int awayTeamScore) throws ValidationException {
+        if (!isScoreValid(awayTeamScore)) {
+            throw new ValidationException("Score must be a positive value");
+        }
+
         this.awayTeamScore = awayTeamScore;
     }
 
