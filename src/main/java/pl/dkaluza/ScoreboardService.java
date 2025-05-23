@@ -21,7 +21,7 @@ public class ScoreboardService {
         scoreboard.addGame(game);
     }
 
-    public void finishGame(String homeTeam, String awayTeam) throws ValidationException {
+    public void finishGame(String homeTeam, String awayTeam) throws GameNotFoundException {
 
     }
 

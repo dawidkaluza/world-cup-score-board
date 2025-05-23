@@ -114,17 +114,15 @@ class ScoreboardServiceTest {
 
     @ParameterizedTest
     @CsvSource(value = {
-        "NULL, NULL",
         "NULL, Poland",
-        "Argentina, NULL",
-        "'', Germany",
-        "Germany, Germany",
+        "Poland, NULL",
+        "NULL, NULL",
     }, nullValues = "NULL")
-    void finishGame_invalidTeamNames_throwException(String homeTeamName, String awayTeamName) {
+    void finishGame_nullParams_throwException(String homeTeamName, String awayTeamName) {
         ScoreboardService scoreboardService = new ScoreboardService();
 
-        ValidationException exception = catchThrowableOfType(
-            ValidationException.class,
+        IllegalArgumentException exception = catchThrowableOfType(
+            IllegalArgumentException.class,
             () -> scoreboardService.finishGame(homeTeamName, awayTeamName)
         );
 
@@ -132,12 +130,68 @@ class ScoreboardServiceTest {
             .isNotNull();
     }
 
-    void finishGame_gameNotFound_throwException() {
+    @ParameterizedTest
+    @CsvSource({
+        "Panama, Ecuador",
+        "Poland, Croatia",
+    })
+    void finishGame_gameNotFound_throwException(String homeTeamName, String awayTeamName) throws GameAlreadyExistsException, ValidationException {
+        ScoreboardService scoreboardService = new ScoreboardService();
+        scoreboardService.startGame("Ecuador", "Panama");
 
+        GameNotFoundException exception = catchThrowableOfType(
+            GameNotFoundException.class,
+            () -> scoreboardService.finishGame(homeTeamName, awayTeamName)
+        );
+
+        assertThat(exception)
+            .isNotNull();
     }
 
-    void finishGame_foundGame_gameRemovedFromScoreboard() {
 
+    @ParameterizedTest
+    @MethodSource("finishGameFoundGameParamsProvider")
+    void finishGame_foundGame_gameRemovedFromScoreboard(List<Map.Entry<String, String>> gamesToStart, Map.Entry<String, String> gameToFinish)
+        throws GameAlreadyExistsException, ValidationException, GameNotFoundException {
+        Scoreboard scoreboard = new Scoreboard();
+        ScoreboardService scoreboardService = new ScoreboardService(scoreboard);
+        for (var gameToStart : gamesToStart) {
+            scoreboardService.startGame(gameToStart.getKey(), gameToStart.getValue());
+        }
+
+        scoreboardService.finishGame(gameToFinish.getKey(), gameToFinish.getValue());
+
+        assertThat(scoreboard.findGameByTeams(gameToFinish.getKey(), gameToFinish.getValue()))
+            .isEmpty();
+    }
+
+    private static Stream<Arguments> finishGameFoundGameParamsProvider() {
+        return Stream.of(
+            Arguments.of(
+                List.of(
+                    Map.entry("Poland", "Germany"),
+                    Map.entry("England", "Croatia"),
+                    Map.entry("Italy", "Portugal")
+                ),
+                Map.entry("Poland", "Germany")
+            ),
+            Arguments.of(
+                List.of(
+                    Map.entry("Poland", "Germany"),
+                    Map.entry("England", "Croatia"),
+                    Map.entry("Italy", "Portugal")
+                ),
+                Map.entry("England", "Croatia")
+            ),
+            Arguments.of(
+                List.of(
+                    Map.entry("Poland", "Germany"),
+                    Map.entry("England", "Croatia"),
+                    Map.entry("Italy", "Portugal")
+                ),
+                Map.entry("Italy", "Portugal")
+            )
+        );
     }
 
     @Test

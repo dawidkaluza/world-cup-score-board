@@ -3,6 +3,7 @@ package pl.dkaluza;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 class Scoreboard {
     private final List<Game> games;
@@ -19,6 +20,14 @@ class Scoreboard {
         }
 
         games.add(game);
+    }
+
+    public Optional<Game> findGameByTeams(String homeTeamName, String awayTeamName) {
+        throw new UnsupportedOperationException();
+    }
+
+    public void removeGame(Game game) {
+        throw new UnsupportedOperationException();
     }
 
     /// Returns a summary of games on the scoreboard, ordered by: total score descending, start time descending.
