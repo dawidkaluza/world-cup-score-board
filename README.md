@@ -33,9 +33,13 @@ Scoreboard:
 
 I could come up with some other entities (such as `Team` entity), but for the current requirements this is enough.
 
+## Comments
+
+- `updateScore` method allows to reduce score. Even though the game itself does not include anything like score reduction, however, certain out-of-game situations might require to do that (e.g.: goal canceled by VAR, mistake)
+
 ## TODO
 
-- [ ] should it be possible to reduce a score by more than two goals? realistically, not really, think about that
+- [x] should it be possible to reduce a score by more than two goals? realistically, not really, think about that
 - [ ] impl null checking in public methods
 - [ ] in tests, extract ScoreboardService and Scoreboard to class fields
 - [ ] remove parameterless constructors from ScoreboardService
