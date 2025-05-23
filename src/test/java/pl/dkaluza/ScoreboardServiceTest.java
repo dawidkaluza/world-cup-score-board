@@ -8,7 +8,6 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -58,79 +57,50 @@ class ScoreboardServiceTest {
     }
 
     @ParameterizedTest
-    @MethodSource("startGameWhenGameAlreadyExistsParamsProvider")
-    void startGame_gameAlreadyExists_throwException(List<Map.Entry<String, String>> existingGamesList) throws ValidationException, GameAlreadyExistsException {
-        for (var entry : existingGamesList) {
-            scoreboardService.startGame(entry.getKey(), entry.getValue());
-        }
+    @CsvSource({
+        "Poland, Germany",
+        "England, Croatia",
+        "Italy, Portugal",
+    })
+    void startGame_gameAlreadyExists_throwException(String homeTeam, String awayTeam) {
+        scoreboardService.startGame("Poland", "Germany");
+        scoreboardService.startGame("England", "Croatia");
+        scoreboardService.startGame("Italy", "Portugal");
 
         GameAlreadyExistsException exception = catchThrowableOfType(
             GameAlreadyExistsException.class,
-            () -> scoreboardService.startGame("Poland", "Germany")
+            () -> scoreboardService.startGame(homeTeam, awayTeam)
         );
 
         assertThat(exception)
             .isNotNull();
     }
 
-    private static Stream<Arguments> startGameWhenGameAlreadyExistsParamsProvider() {
-        return Stream.of(
-            Arguments.of(List.of(
-                Map.entry("Poland", "Germany")
-            )),
-            Arguments.of(List.of(
-                Map.entry("Germany", "Poland"),
-                Map.entry("Poland", "Germany"),
-                Map.entry("Brazil", "USA")
-            )),
-            Arguments.of(List.of(
-                Map.entry("Poland", "Germany"),
-                Map.entry("England", "Spain")
-            )),
-            Arguments.of(List.of(
-                Map.entry("England", "Spain"),
-                Map.entry("Poland", "Germany")
-            ))
-        );
-    }
-
     @ParameterizedTest
-    @MethodSource("startValidNewGameParamsProvider")
-    void startGame_validNewGame_gameAddedToTheScoreboard(List<Map.Entry<String, String>> existingGamesList) throws ValidationException, GameAlreadyExistsException {
-        for (var entry : existingGamesList) {
-            scoreboardService.startGame(entry.getKey(), entry.getValue());
-        }
-
+    @CsvSource({
+        "Brazil, USA",
+        "Canada, Senegal",
+    })
+    void startGame_validNewGame_gameAddedToTheScoreboard(String homeTeam, String awayTeam) throws ValidationException, GameAlreadyExistsException {
         scoreboardService.startGame("Poland", "Germany");
+        scoreboardService.startGame("England", "Croatia");
+        scoreboardService.startGame("Italy", "Portugal");
 
-        Game game = scoreboardService.getSummaryOfGames()
-            .stream()
-            .filter(filteredGame ->
-                filteredGame.id().equals(new GameId("Poland", "Germany"))
-            ).findAny().orElse(null);
+        scoreboardService.startGame(homeTeam, awayTeam);
 
-        assertThat(game)
-            .isNotNull();
+        var gameId = new GameId(homeTeam, awayTeam);
+        Optional<Game> optionalGame = scoreboard.findGameById(gameId);
+
+        assertThat(optionalGame)
+            .isPresent();
+
+        var game = optionalGame.get();
 
         assertThat(game.homeTeamScore())
             .isEqualTo(0);
 
         assertThat(game.awayTeamScore())
             .isEqualTo(0);
-    }
-
-    private static Stream<Arguments> startValidNewGameParamsProvider() {
-        return Stream.of(
-            Arguments.of(List.of()),
-            Arguments.of(List.of(
-                Map.entry("Germany", "Poland"),
-                Map.entry("Brazil", "USA")
-            )),
-            Arguments.of(List.of(
-                Map.entry("Brazil", "Chile"),
-                Map.entry("Germany", "Poland")
-            ))
-        );
     }
 
     @ParameterizedTest
@@ -155,11 +125,32 @@ class ScoreboardServiceTest {
     }
 
     @ParameterizedTest
+    @CsvSource(value = {
+        "'', Poland",
+        "'', ''",
+        "Poland, ''",
+    })
+    void updateScore_invalidTeams_throwException(String homeTeamName, String awayTeamName)
+        throws GameAlreadyExistsException, ValidationException {
+        scoreboardService.startGame("Poland", "Germany");
+        scoreboardService.startGame("England", "Croatia");
+        scoreboardService.startGame("Italy", "Portugal");
+
+        ValidationException exception = catchThrowableOfType(
+            ValidationException.class,
+            () -> scoreboardService.updateScore(homeTeamName, awayTeamName, 1, 1)
+        );
+
+        assertThat(exception)
+            .isNotNull();
+    }
+
+    @ParameterizedTest
     @CsvSource({
         "Germany, Poland",
         "England, Germany",
     })
-    void updateScore_gameNotFound_throwException(String homeTeamName, String awayTeamName) throws GameAlreadyExistsException, ValidationException {
+    void updateScore_gameNotFound_throwException(String homeTeamName, String awayTeamName) {
         scoreboardService.startGame("Poland", "Germany");
         scoreboardService.startGame("England", "Croatia");
         scoreboardService.startGame("Italy", "Portugal");
@@ -200,19 +191,19 @@ class ScoreboardServiceTest {
         "England, Croatia, 4, 0",
         "Italy, Portugal, 0, 0",
     })
-    void updateScore_validUpdate_scoreboardUpdated(String homeTeam, String awayTeam, int homeTeamScore, int awayTeamScore)
-        throws GameAlreadyExistsException, ValidationException, GameNotFoundException {
+    void updateScore_validUpdate_scoreboardUpdated(String homeTeam, String awayTeam, int homeTeamScore, int awayTeamScore) {
         scoreboardService.startGame("Poland", "Germany");
         scoreboardService.startGame("England", "Croatia");
         scoreboardService.startGame("Italy", "Portugal");
 
         scoreboardService.updateScore(homeTeam, awayTeam, homeTeamScore, awayTeamScore);
 
-        Optional<Game> optionalGame = scoreboard.findGameById(new GameId(homeTeam, awayTeam));
+        var id = new GameId(homeTeam, awayTeam);
+        Optional<Game> optionalGame = scoreboard.findGameById(id);
         assertThat(optionalGame)
             .isPresent();
 
-        Game game = optionalGame.get();
+        var game = optionalGame.get();
 
         assertThat(game.homeTeamScore())
             .isEqualTo(homeTeamScore);
@@ -227,9 +218,25 @@ class ScoreboardServiceTest {
         "Poland, NULL",
         "NULL, NULL",
     }, nullValues = "NULL")
-    void finishGame_nullParams_throwException(String homeTeamName, String awayTeamName) {
+    void finishGame_nullParams_throwException(String homeTeam, String awayTeam) {
         IllegalArgumentException exception = catchThrowableOfType(
             IllegalArgumentException.class,
+            () -> scoreboardService.finishGame(homeTeam, awayTeam)
+        );
+
+        assertThat(exception)
+            .isNotNull();
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+        "'', Poland",
+        "Poland, ''",
+        "'', ''",
+    })
+    void finishGame_invalidTeamNames_throwException(String homeTeamName, String awayTeamName) {
+        ValidationException exception = catchThrowableOfType(
+            ValidationException.class,
             () -> scoreboardService.finishGame(homeTeamName, awayTeamName)
         );
 
@@ -240,9 +247,10 @@ class ScoreboardServiceTest {
     @ParameterizedTest
     @CsvSource({
         "Panama, Ecuador",
-        "Poland, Croatia",
+        "Poland, Panama",
+        "Ecuador, Poland",
     })
-    void finishGame_gameNotFound_throwException(String homeTeamName, String awayTeamName) throws GameAlreadyExistsException, ValidationException {
+    void finishGame_gameNotFound_throwException(String homeTeamName, String awayTeamName) {
         scoreboardService.startGame("Ecuador", "Panama");
 
         GameNotFoundException exception = catchThrowableOfType(
@@ -254,49 +262,22 @@ class ScoreboardServiceTest {
             .isNotNull();
     }
 
-
     @ParameterizedTest
-    @MethodSource("finishGameFoundGameParamsProvider")
-    void finishGame_foundGame_gameRemovedFromScoreboard(List<Map.Entry<String, String>> gamesToStart, Map.Entry<String, String> gameToFinish)
-        throws GameAlreadyExistsException, ValidationException, GameNotFoundException {
-        for (var gameToStart : gamesToStart) {
-            scoreboardService.startGame(gameToStart.getKey(), gameToStart.getValue());
-        }
+    @CsvSource({
+        "Poland, Germany",
+        "England, Croatia",
+        "Italy, Portugal",
+    })
+    void finishGame_foundGame_gameRemovedFromScoreboard(String homeTeam, String awayTeam) {
+        scoreboardService.startGame("Poland", "Germany");
+        scoreboardService.startGame("England", "Croatia");
+        scoreboardService.startGame("Italy", "Portugal");
 
-        scoreboardService.finishGame(gameToFinish.getKey(), gameToFinish.getValue());
+        scoreboardService.finishGame(homeTeam, awayTeam);
 
-        assertThat(scoreboard.findGameById(new GameId(gameToFinish.getKey(), gameToFinish.getValue())))
+        var id = new GameId(homeTeam, awayTeam);
+        assertThat(scoreboard.findGameById(id))
             .isEmpty();
-    }
-
-    // TODO move into CsvSource
-    private static Stream<Arguments> finishGameFoundGameParamsProvider() {
-        return Stream.of(
-            Arguments.of(
-                List.of(
-                    Map.entry("Poland", "Germany"),
-                    Map.entry("England", "Croatia"),
-                    Map.entry("Italy", "Portugal")
-                ),
-                Map.entry("Poland", "Germany")
-            ),
-            Arguments.of(
-                List.of(
-                    Map.entry("Poland", "Germany"),
-                    Map.entry("England", "Croatia"),
-                    Map.entry("Italy", "Portugal")
-                ),
-                Map.entry("England", "Croatia")
-            ),
-            Arguments.of(
-                List.of(
-                    Map.entry("Poland", "Germany"),
-                    Map.entry("England", "Croatia"),
-                    Map.entry("Italy", "Portugal")
-                ),
-                Map.entry("Italy", "Portugal")
-            )
-        );
     }
 
     @Test
@@ -309,8 +290,7 @@ class ScoreboardServiceTest {
 
     @ParameterizedTest
     @MethodSource("getSummaryOfGamesParamsProvider")
-    void getSummaryOfGames_variousGamesAdded_returnInExpectedOrder(List<Game> addedGames, List<Game> expectedSummary)
-        throws GameAlreadyExistsException {
+    void getSummaryOfGames_variousGamesAdded_returnInExpectedOrder(List<Game> addedGames, List<Game> expectedSummary) {
         for (var game : addedGames) {
             scoreboard.addGame(game);
         }
@@ -364,9 +344,9 @@ class ScoreboardServiceTest {
         );
     }
 
-    private static Game createGame(String homeTeamName, String awayTeamName, int homeTeamScore, int awayTeamScore)
+    private static Game createGame(String homeTeam, String awayTeam, int homeTeamScore, int awayTeamScore)
         throws ValidationException {
-        var gameId = new GameId(homeTeamName, awayTeamName);
+        var gameId = new GameId(homeTeam, awayTeam);
         var game = new Game(gameId);
         game.setHomeTeamScore(homeTeamScore);
         game.setAwayTeamScore(awayTeamScore);
