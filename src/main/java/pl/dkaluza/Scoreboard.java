@@ -23,11 +23,13 @@ class Scoreboard {
     }
 
     public Optional<Game> findGameByTeams(String homeTeamName, String awayTeamName) {
-        throw new UnsupportedOperationException();
+        return games.stream()
+            .filter(game -> game.homeTeamName().equals(homeTeamName) && game.awayTeamName().equals(awayTeamName))
+            .findAny();
     }
 
     public void removeGame(Game game) {
-        throw new UnsupportedOperationException();
+        games.remove(game);
     }
 
     /// Returns a summary of games on the scoreboard, ordered by: total score descending, start time descending.

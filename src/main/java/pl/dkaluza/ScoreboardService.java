@@ -22,7 +22,13 @@ public class ScoreboardService {
     }
 
     public void finishGame(String homeTeam, String awayTeam) throws GameNotFoundException {
+        Assertions.assertArgumentNotNull(homeTeam);
+        Assertions.assertArgumentNotNull(awayTeam);
 
+        Game game = scoreboard.findGameByTeams(homeTeam, awayTeam)
+            .orElseThrow(() -> new GameNotFoundException("Game not found"));
+
+        scoreboard.removeGame(game);
     }
 
     /// Returns a summary of games on the scoreboard, ordered by: total score descending, start time descending.
