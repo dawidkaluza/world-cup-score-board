@@ -78,6 +78,26 @@ class ScoreboardServiceTest {
 
     @ParameterizedTest
     @CsvSource({
+        "Poland, USA",
+        "Croatia, Brazil",
+        "Portugal, Italy",
+    })
+    void startGame_teamAlreadyPlays_throwException(String homeTeam, String awayTeam) {
+        scoreboardService.startGame("Poland", "Germany");
+        scoreboardService.startGame("England", "Croatia");
+        scoreboardService.startGame("Italy", "Portugal");
+
+        TeamAlreadyPlaysException exception = catchThrowableOfType(
+            TeamAlreadyPlaysException.class,
+            () -> scoreboardService.startGame(homeTeam, awayTeam)
+        );
+
+        assertThat(exception)
+            .isNotNull();
+    }
+
+    @ParameterizedTest
+    @CsvSource({
         "Brazil, USA",
         "Canada, Senegal",
     })
