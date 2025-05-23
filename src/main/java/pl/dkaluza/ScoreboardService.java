@@ -30,7 +30,7 @@ public class ScoreboardService {
             .orElseThrow(() -> new GameNotFoundException("Game not found"));
 
         game.setHomeTeamScore(homeTeamScore);
-        game.setHomeTeamScore(awayTeamScore);
+        game.setAwayTeamScore(awayTeamScore);
     }
 
     public void finishGame(String homeTeam, String awayTeam) throws GameNotFoundException {

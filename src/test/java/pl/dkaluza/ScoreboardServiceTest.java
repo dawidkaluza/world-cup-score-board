@@ -8,6 +8,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.*;
@@ -176,8 +177,33 @@ class ScoreboardServiceTest {
             .isNotNull();
     }
 
-    void updateScore_validUpdate_scoreboardUpdated() {
+    @ParameterizedTest
+    @CsvSource({
+        "Poland, Germany, 0, 2",
+        "England, Croatia, 4, 0",
+        "Italy, Portugal, 0, 0",
+    })
+    void updateScore_validUpdate_scoreboardUpdated(String homeTeamName, String awayTeamName, int homeTeamScore, int awayTeamScore)
+        throws GameAlreadyExistsException, ValidationException, GameNotFoundException {
+        Scoreboard scoreboard = new Scoreboard();
+        ScoreboardService scoreboardService = new ScoreboardService(scoreboard);
+        scoreboardService.startGame("Poland", "Germany");
+        scoreboardService.startGame("England", "Croatia");
+        scoreboardService.startGame("Italy", "Portugal");
 
+        scoreboardService.updateScore(homeTeamName, awayTeamName, homeTeamScore, awayTeamScore);
+
+        Optional<Game> optionalGame = scoreboard.findGameByTeams(homeTeamName, awayTeamName);
+        assertThat(optionalGame)
+            .isPresent();
+
+        Game game = optionalGame.get();
+
+        assertThat(game.homeTeamScore())
+            .isEqualTo(homeTeamScore);
+
+        assertThat(game.awayTeamScore())
+            .isEqualTo(awayTeamScore);
     }
 
     @ParameterizedTest
