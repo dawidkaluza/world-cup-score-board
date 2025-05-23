@@ -15,6 +15,7 @@ public class ScoreboardService {
     /// @throws IllegalArgumentException if params are null.
     /// @throws ValidationException if team names are invalid.
     /// @throws GameAlreadyExistsException if the game already exists on the scoreboard.
+    /// @throws TeamAlreadyPlaysException if one of given teams already plays in some other game.
     public void startGame(String homeTeam, String awayTeam) throws ValidationException, GameAlreadyExistsException {
         Assertions.argumentNotNull(homeTeam);
         Assertions.argumentNotNull(awayTeam);
