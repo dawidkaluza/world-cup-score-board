@@ -112,6 +112,22 @@ class ScoreboardServiceTest {
         );
     }
 
+    void updateScore_nullParams_throwException() {
+
+    }
+
+    void updateScore_gameNotFound_throwException() {
+
+    }
+
+    void updateScore_invalidScore_throwException() {
+
+    }
+
+    void updateScore_validUpdate_scoreboardUpdated() {
+
+    }
+
     @ParameterizedTest
     @CsvSource(value = {
         "NULL, Poland",

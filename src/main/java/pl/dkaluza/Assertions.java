@@ -5,7 +5,7 @@ public final class Assertions {
 
     }
 
-    public static void assertArgumentNotNull(Object object) throws IllegalArgumentException {
+    public static void argumentNotNull(Object object) throws IllegalArgumentException {
         if (object == null) {
             throw new IllegalArgumentException("Argument is null");
         }

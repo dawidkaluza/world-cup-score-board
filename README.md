@@ -33,3 +33,8 @@ Scoreboard:
 
 I could come up with some other entities (such as `Team` entity), but for the current requirements this is enough.
 
+## TODO
+
+- should it be possible to reduce score by more than two goals for one team? realistically, not really, think about that
+- impl null checking in public methods
+
