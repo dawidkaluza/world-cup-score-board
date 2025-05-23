@@ -85,8 +85,7 @@ class ScoreboardServiceTest {
         Game game = scoreboardService.getSummaryOfGames()
             .stream()
             .filter(filteredGame ->
-                filteredGame.homeTeamName().equals("Poland") &&
-                filteredGame.awayTeamName().equals("Germany")
+                filteredGame.id().equals(new GameId("Poland", "Germany"))
             ).findAny().orElse(null);
 
         assertThat(game)
@@ -360,7 +359,8 @@ class ScoreboardServiceTest {
 
     private static Game createGame(String homeTeamName, String awayTeamName, int homeTeamScore, int awayTeamScore)
         throws ValidationException {
-        var game = new Game(homeTeamName, awayTeamName);
+        var gameId = new GameId(homeTeamName, awayTeamName);
+        var game = new Game(gameId);
         game.setHomeTeamScore(homeTeamScore);
         game.setAwayTeamScore(awayTeamScore);
         return game;

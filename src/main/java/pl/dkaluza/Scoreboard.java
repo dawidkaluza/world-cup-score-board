@@ -22,9 +22,10 @@ class Scoreboard {
         games.add(game);
     }
 
+    // TODO update params to accept GameId only
     public Optional<Game> findGameByTeams(String homeTeamName, String awayTeamName) {
         return games.stream()
-            .filter(game -> game.homeTeamName().equals(homeTeamName) && game.awayTeamName().equals(awayTeamName))
+            .filter(game -> game.id().homeTeam().equals(homeTeamName) && game.id().awayTeam().equals(awayTeamName))
             .findAny();
     }
 

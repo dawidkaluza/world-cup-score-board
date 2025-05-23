@@ -1,6 +1,6 @@
 package pl.dkaluza;
 
-public class ValidationException extends Exception {
+public class ValidationException extends ScoreboardException {
     public ValidationException(String message) {
         super(message);
     }

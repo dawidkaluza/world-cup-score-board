@@ -17,7 +17,8 @@ public class ScoreboardService {
     /// @throws ValidationException if team names are invalid.
     /// @throws GameAlreadyExistsException if the game already exists in the scoreboard.
     public void startGame(String homeTeam, String awayTeam) throws ValidationException, GameAlreadyExistsException {
-        Game game = new Game(homeTeam, awayTeam);
+        var gameId = new GameId(homeTeam, awayTeam);
+        var game = new Game(gameId);
         scoreboard.addGame(game);
     }
 

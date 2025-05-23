@@ -1,6 +1,6 @@
 package pl.dkaluza;
 
-public class GameAlreadyExistsException extends Exception {
+public class GameAlreadyExistsException extends ScoreboardException {
     public GameAlreadyExistsException(String message) {
         super(message);
     }

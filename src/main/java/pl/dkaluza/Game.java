@@ -1,38 +1,20 @@
 package pl.dkaluza;
 
 public class Game {
-    private final String homeTeamName;
-    private final String awayTeamName;
+    private final GameId id;
     private int homeTeamScore;
     private int awayTeamScore;
 
-    public Game(String homeTeamName, String awayTeamName) throws ValidationException {
-        if (!isTeamNameValid(homeTeamName) || !isTeamNameValid(awayTeamName)) {
-            throw new ValidationException("Team names must bo non-blank strings");
-        }
-
-        if (homeTeamName.equals(awayTeamName)) {
-            throw new ValidationException("Home and away team must must be different");
-        }
-
-        this.homeTeamName = homeTeamName;
-        this.awayTeamName = awayTeamName;
+    Game(GameId id) {
+        this.id = id;
     }
 
-    private static boolean isTeamNameValid(String teamName) {
-        return teamName != null && !teamName.isBlank();
+    private static boolean isScoreInvalid(int score) {
+        return score < 0;
     }
 
-    private static boolean isScoreValid(int score) {
-        return score >= 0;
-    }
-
-    public String homeTeamName() {
-        return homeTeamName;
-    }
-
-    public String awayTeamName() {
-        return awayTeamName;
+    public GameId id() {
+        return id;
     }
 
     public int homeTeamScore() {
@@ -40,7 +22,7 @@ public class Game {
     }
 
     void setHomeTeamScore(int homeTeamScore) throws ValidationException {
-        if (!isScoreValid(homeTeamScore)) {
+        if (isScoreInvalid(homeTeamScore)) {
             throw new ValidationException("Score must be a positive value");
         }
 
@@ -52,7 +34,7 @@ public class Game {
     }
 
     void setAwayTeamScore(int awayTeamScore) throws ValidationException {
-        if (!isScoreValid(awayTeamScore)) {
+        if (isScoreInvalid(awayTeamScore)) {
             throw new ValidationException("Score must be a positive value");
         }
 
@@ -69,20 +51,20 @@ public class Game {
             return false;
         }
 
-        return homeTeamName.equals(game.homeTeamName) && awayTeamName.equals(game.awayTeamName);
+        return id.equals(game.id);
     }
 
     @Override
     public int hashCode() {
-        int result = homeTeamName.hashCode();
-        result = 31 * result + awayTeamName.hashCode();
-        return result;
+        return id.hashCode();
     }
 
     @Override
     public String toString() {
         return "Game{" +
-               homeTeamName + " " + homeTeamScore + ":" + awayTeamScore + " " + awayTeamName +
-       '}';
+               "id=" + id +
+               ", homeTeamScore=" + homeTeamScore +
+               ", awayTeamScore=" + awayTeamScore +
+               '}';
     }
 }
