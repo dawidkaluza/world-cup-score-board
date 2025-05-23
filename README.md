@@ -39,4 +39,5 @@ I could come up with some other entities (such as `Team` entity), but for the cu
 - impl null checking in public methods
 - in tests, extract ScoreboardService and Scoreboard to class fields
 - remove parameterless constructors from ScoreboardService
-
+- review and refactor where needed
+- make all checked exceptions non-checked exceptions, extending from ScoreboardException class
