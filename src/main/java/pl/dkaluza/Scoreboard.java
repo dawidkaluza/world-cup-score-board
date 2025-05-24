@@ -1,15 +1,12 @@
 package pl.dkaluza;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 class Scoreboard {
     private final List<Game> games;
 
     public Scoreboard() {
-        this.games = new ArrayList<>();
+        this.games = new LinkedList<>();
     }
 
     public void addGame(Game game) throws GameAlreadyExistsException, TeamAlreadyPlaysException {
